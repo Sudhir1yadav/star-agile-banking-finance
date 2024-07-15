@@ -2,7 +2,7 @@
 terraform {
  required_provider {
   aws = {
-    source = "hasicorp/aws"
+    source = "hashicorp/aws"
       version = "~> 4.0"
     }
   }
@@ -136,7 +136,7 @@ resource "aws_instance" "Prod-Server" {
  availability_Zone = "ap-south-1b"
  key_name = "koko"
  network_interface_id = aws_network_interface.proj-ni.id
-}
+
 user_data = <<-EOF
 #!/bin/bash
     sudo apt-get update -y
