@@ -19,7 +19,7 @@ resource "aws_vpc" "proj-vpc" {
 
 # Internet Gateway
 
-resource "aws_internet_gateway" "pro-ig" {
+resource "aws_internet_gateway" "proj-ig" {
   vpc_id = aws_vpc.proj-vpc.id
 
   tags = {
@@ -37,7 +37,7 @@ cidr_block = "0.0.0.0/0"
 gateway_id = aws_internet_gateway.proj-ig.id
 }
 route {
-ipv6_cidr-block = "::/0"
+ipv6_cidr_block = "::/0"
 gateway_id = aws_internet_gateway.proj-ig.id
 }
 tags = {
@@ -49,16 +49,16 @@ Name = "rt1"
 resource "aws_subnet" "proj-subnet" {
   vpc_id     = aws_vpc.proj-vpc.id
   cidr_block = "10.0.1.0/24"
-  availability_Zone = "ap-south-1b"
+  availability_zone = "ap-south-1b"
   tags = {
     Name = "subnet1"
   }
 }
 
 #Associating the subnet with the rout table
-resource "aws_rout_table_association" "proj-rt-sub-assoc" {
+resource "aws_route_table_association" "proj-rt-sub-assoc" {
 subnet_id = aws_subnet.proj-subnet.id
-rout_table_id = aws_rout_table.proj-rt.id
+route_table_id = aws_route_table.proj-rt.id
 }
 
 # Creating a security Group
@@ -117,7 +117,7 @@ egress {
 }
 
 # Creating an new network interface
-resource "aws_network_interface" "proj-nj" {
+resource "aws_network_interface" "proj-ni" {
 subnet_id = aws_subnet.proj-subnet.id
 private_ips = ["10.0.1.10"]
 security_groups = [aws_security_group.proj-sg.id]
@@ -133,9 +133,14 @@ associate_with_private_ip = "10.0.1.10"
 resource "aws_instance" "Prod-Server" {
  ami = "ami-0f58b397bc5c1f2e8"
  instance_type = "t2.micro"
- availability_Zone = "ap-south-1b"
+ availability_zone = "ap-south-1b"
  key_name = "koko"
- network_interface_id = aws_network_interface.proj-ni.id
+ network_interface {
+    network_interface_id = aws_network_interface.proj-ni.id
+    device_index         = 0
+  }
+
+ #network_interface_id = aws_network_interface.proj-ni.id
 
 user_data = <<-EOF
 #!/bin/bash
@@ -145,39 +150,3 @@ tags = {
 Name = "prod-server"
 }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
